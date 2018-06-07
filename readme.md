@@ -1,13 +1,13 @@
 [FriendlyARM - Tiny6410](http://www.arm9.net/tiny6410.asp)
 ====
 
-##Hardware Info
+## Hardware Info
 
 | Hardware | Description |
 | :----: | :---------: |
 | CPU | **SAMSUNG S3C6410A**, [ARM1176JZF-S](doc/arm-naming-rules/readme.md), run at 533Mhz, up to 667Mhz |
 | Board | **Tiny6410 (v1308)** |
-| SDRAM | SAMSUNG K4X2G323PD-8GD8, Mobile DDR 64Mx32(=2048Mb = **256GB** ) 200Mhz Halogen Free FBGA90 DRAM |
+| SDRAM | SAMSUNG K4X2G323PD-8GD8, Mobile DDR 64Mx32(=2048Mb = **256MB** ) 200Mhz Halogen Free FBGA90 DRAM |
 | FLASH | SAMSUNG K9K8G08U0E-SCB0, the same datasheet), 8G bit(= **1GB** ) Nand Flash 1Gx8 SLC |
 | LEDs | LED1~4 => GPK4~7, active-low |
 | Button | Reset button, M_nRESET, active-low |
@@ -20,7 +20,7 @@
 | USB Device | miniUSB, USB 2.0 |
 | USB Host | USB A, USB 2.0 hub(x3) |
 
-##Folder Description
+## Folder Description
 
 | folder | description |
 | :----: | :---------: |
@@ -32,7 +32,7 @@
 
 ## Tiny6410 - v1308
 
-###crystal
+### crystal
 
 | crystal | interface | description |
 | :----: | :----: | :---------: |
@@ -41,7 +41,7 @@
 | USB OTG Clock | OTGTO,OTGTI | Y3, 48M |
 | RTC Clock | RTCTO,RTCTI | Y4, 32.768K |
 
-###NAND FLASH - K9K8G08U0E
+### NAND FLASH - K9K8G08U0E
 
 SAMSUNG K9K8G08U0E-SCB0, 8G bit Nand Flash,1Gx8 SLC
 K9F4G08U0E , K9K8G08U0E, 同一个芯片手册;
@@ -59,7 +59,7 @@ K9F4G08U0E , K9K8G08U0E, 同一个芯片手册;
         - Mode: 0 = Normal
         - Generation: E = 6th generation
 
-###SDRAM - K4X2G323PD-8GD8
+### SDRAM - K4X2G323PD-8GD8
 
 <http://www.samsung.com/us/business/oem-solutions/pdfs/PSG_2H_2012.pdf>
 
@@ -77,7 +77,7 @@ K9F4G08U0E , K9K8G08U0E, 同一个芯片手册;
 
 ----
 
-###FriendlyARM Tiny6410 下载程序 - MiniTools.exe
+### FriendlyARM Tiny6410 下载程序 - MiniTools.exe
 
 
 1. 底层板S2选择NAND启动方式
@@ -111,9 +111,9 @@ K9F4G08U0E , K9K8G08U0E, 同一个芯片手册;
 
 注意: **必须先给板子上电，然后再打开MiniTools.exe**, 否则MiniTools.exe会卡死无响应。
 
-###[FriendlyARM Tiny6410 下载程序 - SDHC](no-os/sd-no-os/readme.md)
+### [FriendlyARM Tiny6410 下载程序 - SDHC](no-os/sd-no-os/readme.md)
 
-###交叉编译链 ARM Compilers Toolchains
+### 交叉编译链 ARM Compilers Toolchains
 
 [ARM Compilers](http://elinux.org/ARMCompilers)
 
