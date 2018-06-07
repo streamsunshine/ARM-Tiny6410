@@ -120,3 +120,9 @@ K9F4G08U0E , K9K8G08U0E, 同一个芯片手册;
 [arm-linux-gcc-4.5.1-v6-vfp-20101103](http://www.arm9.net/download.asp)
 
 [Download: arm-2014.05-29-arm-none-linux-gnueabi-i686-pc-linux-gnu](https://sourcery.mentor.com/GNUToolchain/package12813/public/arm-none-linux-gnueabi/arm-2014.05-29-arm-none-linux-gnueabi-i686-pc-linux-gnu.tar.bz2)
+
+交叉编译链的版本一般没有要求。在使用上述最后一个交叉编译链时，解压缩后在对应的文件夹内无法运行程序，原因是PC是64位系统，而交叉编译链对应的32位，所以需要安装32位库，对于ubuntu使用如下命令安装32位库。
+
+sudo apt-get install lib32ncurses5
+
+sudo apt-get install lib32z1
