@@ -71,7 +71,7 @@ typedef struct{
 
 ```
 
-### 4Basics_pragram的作用
+### 4Basics_#pragram的作用
 \#pragma作用
 * 设置编译器状态，指示编译器完成特定的指令。
 * 这种指示或者指令对于不同的编译器是不同的。
