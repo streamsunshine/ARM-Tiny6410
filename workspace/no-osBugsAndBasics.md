@@ -3,7 +3,8 @@
 
 ## 目录
 
- [1、C启动文件和标准库文件](###1Bugs)  
+ [1、C启动文件和标准库文件](#1Bugs)  
+ [1Bugs](#1Bugs)
  [2、文件链接顺序问题](# 2Basics)  
  [3、volatile的使用](#Bugs And Basics)  
  [4、#pragram的作用](#4Basics)  
