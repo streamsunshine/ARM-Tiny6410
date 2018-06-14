@@ -6,7 +6,7 @@
  [1、C启动文件和标准库文件](#1bugs_c启动文件和标准库文件)  
  [2、文件链接顺序问题](#2basics_文件链接顺序问题)  
  [3、volatile的使用](#3basics_volatile的使用)  
- [4、#pragram的作用](#4basics_\#pragram的作用)  
+ [4、\#pragram的作用](#4basics_\#pragram的作用)  
  [5、交叉编译链的构建](#5basics_交叉编译链的构建)  
  [6、时钟配置和调用时机](#6basics_时钟配置和调用时机)  
  [7、启动流程](#7basics_启动流程)  
