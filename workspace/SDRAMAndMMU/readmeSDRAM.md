@@ -66,15 +66,14 @@ DDR SDRAM的行地址和列地址共用同一地址总线，这个地址总线�
 	
 ----
 
-### DRAM控制器（DRAM CONTROLLER）
+###DRAM控制器（DRAM CONTROLLER）
 参考：<http://www.linuxidc.com/Linux/2011-09/42025.htm>   
 
-参考：s3c6410x.pdf  （存储在三星原厂资料文件夹）下面的解释相当于对
 6410使用DRAM控制器对DDR进行操作。   
 在程序开始时要根据DDR的参数设置DRAM控制器。S3C6410的DRAM控制器是采用的PL340内存控制芯片(ARM PrimeCell CP003 AXI Dynamic Memory Controller)。   
 AMBA APB3.0接口协议规定，可以通过编程将AXI从总线接口和APB主总线接口进行桥接，实现二者总线上的数据的传输。
 
-DRAM控制器可以通过配置**兼容SDRAM类型芯片**。通过向DRAM控制器中PL340写入内存芯片配置参数，内存时序，来控制内存工作。 DRAM控制器除了可接收发送给DRAM控制器的命令，还可以接受发送给SDRAM的控制命令：
+DRAM控制器可以通过配置**兼容SDRAM类型芯片**。通过向DRAM控制器中PL340写入内存芯片配置参数，内存时序，来控制内存工作。 DRAM控制器可以直接从SDRAM或DRAM接收一个控制命令：
 * 通过将操作命令写入direct_cmd寄存器，操作SDRAM进行对应操作。
 * 通过向memc_cmd寄存器写入状态模式命令，使DRAM控制器进入对应的工作模式。
 例如：向direct_cmd寄存器写入：'Prechargeall’，‘Autorefresh’，‘NOP’，and ‘MRS’ 等命令，可以让SDRAM芯片分别执行不同操作，向memc_cmd寄存器写入一些状态命令可以让SDRAM芯片进入’Config’, ‘Ready’, and ‘Low_power’等工作模式。 

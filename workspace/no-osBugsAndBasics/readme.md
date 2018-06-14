@@ -10,7 +10,9 @@
  [5、交叉编译链的构建](#5basics_交叉编译链的构建)  
  [6、时钟配置和调用时机](#6basics_时钟配置和调用时机)  
  [7、启动流程](#7basics_启动流程)  
-        
+ [8、SRAM，DRAM，SDRAM，DDR SDRAM](#8basics_ram)  
+ [9、Boot镜像区](#9basics_boot镜像区)
+
 ### 1Bugs_C启动文件和标准库文件
 <span id = "1Bugs">跳转到的位置</span>
  连接程序时报"undefined reference to '__aeabi_unwind_cpp_pr0'"
@@ -71,7 +73,7 @@ typedef struct{
 
 ```
 
-### 4Basics_pragram的作用
+### 4Basics_#pragram的作用
 \#pragma作用
 * 设置编译器状态，指示编译器完成特定的指令。
 * 这种指示或者指令对于不同的编译器是不同的。
@@ -136,6 +138,8 @@ Output:
 ### 7Basics_启动流程
 
 &emsp;6410 Booting模式配置，是通过OM[4:0]、XSELNAND、GPN[15:13]共同决定:   
+
+在启动最初，由于ARM在上电后，将地址0x0赋给PC指针，所以在不同的启动模式下，需要将0x0开始的一段地址映射到相应的地址空间内，以方便支持不同的启动模式。这段以0x0开始的地址范围称为[Boot镜像区](#9basic_boot镜像区)。
 
 #### OM[4:0]
 
@@ -242,7 +246,7 @@ BL1主要是将除（NAND Flash、SD/MMC、ONENAND Flash等几者之一）8K之�
 * 确认BL1的完整性
 * 跳转到BL1
 
-#### s3c6410的启动流程解析
+#### s3c6410的IROM启动流程解析
 
 &emsp;1、s3c6410IROM启动过程分成BL0, BL1, BL2几个阶段。其中BL0是固化在s3c6410内部的IROM中的, 该段程序根据所选择的启动模式从存储介质加载BL1。  
 &emsp;2、s3c6410支持从多种存储介质中启动，nandflash, sd卡，sdhc卡，OneNand, MoviNand.... 其中，BL1和BL2存储于这些存储介质中，BL1的8K数据由BL0的程序自动加载到s3c6410的stepping stone中运行。  
@@ -263,4 +267,30 @@ DRAM
 	* 在链接脚本中，配置地址为0x5000_0000;
 	
 
+### 8Basics_RAM
+
+&emsp;SRAM是静态RAM，DRAM是动态RAM，SDRAM是同步动态RAM（S表示synchronous），DDR是全称是DDR SDRAM（DDR表示Double Data Rate）。  
+&emsp;数据速率：SRAM>DDR>SDRAM>DRAM  
+&emsp;SRAM的速率快是由于其结构不同于DRAM，单位bit使用了更多的晶体管，所以其价格更高。对于DRAM，各个版本的存储结构是相同的，单位bit使用的晶体管也相同，但是每一次速度的提升，同时对现有结构进行的改进，因此在控制方法上存在差异，一般都会为DRAM提供控制器，只需对控制器进行合理的配置即可。
+
+[参考](http://www.dzsc.com/data/2014-8-27/106499.html)
+
+### 9Baisics_Boot镜像区
+
+Boot镜像区位于6410寻址空间的0x0~0x07FFFFFF（128MB）位置，这段区域并没有真正的存储设备，实际运行过程中是映射到内部存储区或静态存储区，Boot镜像区固定起始地址为0x00000000。使用Boot镜像区的原因是ARM内核启动之后强制PC从0x0地址开始取指有关。至于与哪些特定区域镜像，与系统配置密切相关，当系统为：
+
+1、SROM (8 bit/16 bit)启动（booting）
+&emsp;当系统为SROM启动，Boot镜像区为SROM控制器的第0个bank（128MB），即0x10000000~0x17FFFFFF地址，支持的存储器可以是SRAM、ROM、Nor flash等，对应地址片选引脚Xm0CSn[0]。
+
+2、MODEM(8 bit/16 bit)启动（booting）
+&emsp;当系统为MODEM模式，Boot镜像区仅地址为0x00000000~0x00007FFF的32KB区域有效，且对应为6410内部的I_ROM区低32KB字节0x08000000~0x08007FFF。
+
+3、ONENAND 启动（booting）
+&emsp;当系统为ONENAND 模式启动，整个Boot镜像区0x0~0x07FFFFFF全部为静态存储器0x20000000~0x27FFFFFF地址镜像，128MB一一对应。
+6410支持2 Bank个ONENAND 地址映射区，分别为ONENAND0 和ONENAND1，只有ONENAND0对应的地址才可能在启动时候镜像到Boot镜像区。
+
+4、IROM启动（booting）
+&emsp;当系统配置为IROM启动时，Boot镜像区仅地址为0x00000000~0x00007FFF的32KB区域有效，且对应为6410内部的I_ROM区低32KB字节0x08000000~0x08007FFF。
+
+[参考](https://blog.csdn.net/mj5742356/article/details/9108299)
 
