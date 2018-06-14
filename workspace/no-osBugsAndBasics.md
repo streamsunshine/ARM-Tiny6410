@@ -1,4 +1,4 @@
-# Bugs And Basics
+# no-osBugsAndBasics
  记录编译裸机时候的一些错误和有关编译的一些基础知识。
 
 ## 目录
@@ -13,7 +13,7 @@
  [7、启动流程](#7Basics)  
         
 ### 1Bugs
-------
+<span id = "1Bugs">跳转到的位置</span>
  连接程序时报"undefined reference to '__aeabi_unwind_cpp_pr0'"
  C语言程序在连接时，会自动连接启动文件和库文件。启动文件用来做C程序的入口。当连接器找不到相应的文件时，就会报错，可以给连接器添加-nostdlib选项解决错误，但是要自己编写start.s作为启动程序（其中包含堆栈的设置，跳转到main函数以及跳出main函数后程序循环等待）。-nostdlib选项作用是不连接系统标准启动文件和标准库文件，只将指定的文件传递给链接器。
 
