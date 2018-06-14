@@ -3,13 +3,13 @@
 
 ## 目录
 
- [1、C启动文件和标准库文件](#1Bugs)
- [2、文件链接顺序问题](#2Basics)
- [3、volatile的使用](#3Basics)
- [4、#pragram的作用](#4Basics)
- [5、交叉编译链的构建](#5Basics)
- [6、时钟配置和调用时机](#6Basics)
- [7、启动流程](#7Basics)
+ [1、C启动文件和标准库文件](###1Bugs)  
+ [2、文件链接顺序问题](# 2Basics)  
+ [3、volatile的使用](#Bugs And Basics)  
+ [4、#pragram的作用](#4Basics)  
+ [5、交叉编译链的构建](#5Basics)  
+ [6、时钟配置和调用时机](#6Basics)  
+ [7、启动流程](#7Basics)  
         
 ### 1Bugs
  连接程序时报"undefined reference to '__aeabi_unwind_cpp_pr0'"
