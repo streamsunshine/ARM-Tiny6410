@@ -1,3 +1,35 @@
+# NAND NOR OneNAND
+
+[本目录代码详解](#代码详解)
+
+## 概念
+
+**SLC**：single level cell，一个cell存储一个bit，只有高低电平，擦写次数可达10万次。  
+**MLC**：multi level cell，一个cell存储两个bit，擦写次数一万次。  
+**TLC**：Triple level cell，一个cell存储三个bit，擦写次数5000次左右，很少达到一万次。  
+&emsp;三者都是Nand flash一个位置的存储结构，从上到下，存储密度依次增加，操作难度一次增大。
+
+## 比较
+
+![Nand OneNand Nor](Nand_OneNand_Nor.png)
+
+其中Nor支持XIP，XIP是指在flash上运行程序,需要能够随机访问。
+
+Nor：块大小64~128KB，擦写一个块4s，擦写次数1万次，位反转少。  
+Nand：块大小8~64KB，擦写一个块2ms，擦写次数可达10万次，容易位反转。
+
+## Nand接口和访存
+
+1、接口：8个IO引脚，5个使能信号（nWE,ALE,CLE,nCE,nRE）、1个状态引脚（RDY/B）、1个写保护引脚（nWP）。
+
+2、过程：先传输命令，然后传输地址，最后读写数据，期间要检查flash状态。使用CLE表示命令，ALE表示地址。读操作，先发送命令字（50h/00h/01h），发送地址序列，等待R/nB引脚为高，读数据。写命令一般以页为单位，先发送80h，然后地址序列，最后发送10h启动 操作，通过70h读flash状态,确定是否成功。擦除先发送60h，然后地址，然后发送D0h启动操作，70h查询状态，确定是否成功。
+
+3、结构：行列结构：器件>块>页。以K9F1208U0M为例，528Mbit=4096块，1块=528B\*32页（行），1页=(512+16)字节，其中每一个字节对应一个列。由于8个IO只能访问256个位置，所以需要使用不同的指令访问A区0~255（00h），B区256~511（01h），C区512~527（50h）。  
+&emsp;存储层，一个器件可分为几个存储层。以K9F1208U0M为例，其有4个存储层（plane），每个存储层有1024个block和一个528字节的寄存器，这可以同时写多个页。
+
+4、Nand控制器，为了简化操作，使用控制器。通过操作寄存器完成存储器操作。首先配置配置寄存器，然后命令寄存器，地址寄存器，状态寄存器，数据寄存器。
+
+    
 Tiny6410 - NAND Flash Controller
 ====
 
@@ -5,7 +37,7 @@ Tiny6410 - NAND Flash Controller
 The S3C6410X is equipped with an internal SRAM buffer called ‘Steppingstone’.    Generally, the boot code will copy NAND flash content to SDRAM. Using hardware ECC, the NAND flash data validity will be checked. After the NAND flash content is copied to SDRAM, main program will be executed on SDRAM.    To use NAND Flash, 'XSELNAND' pin must be connected to High Level. (原理图Tiny6410-1308.pdf中，'XSELNAND'引脚连接VDD3V3)
 
 
-### Nand Flash 
+### Nand Flash Features
 
 1. NAND Flash memory I/F: Support 512Bytes and 2KB Page .2. Software mode: User can directly access NAND flash memory. for example this feature can be used in read/erase/program NAND flash memory.3. Interface: 8-bit NAND flash memory interface bus.4. Hardware ECC generation, detection and indication (Software correction).5. Support both SLC and MLC NAND flash memory : 1-bit ECC, 4-bit and 8-bit ECC for NAND flash.(Recommend: 1bit ECC for SLC, 4bit and 8bit ECC for MLC NAND Flash)6. SFR I/F: Support Byte/half word/word access to Data and ECC Data register, and Word access to other registers7. SteppingStone I/F: Support Byte/half word/word access.8. The Steppingstone 8-KB internal SRAM buffer can be used for another purpose . (S3C6410 Stepping Stone: 0x0C000000 ~ 0x0C001FFF (8K) )
 
@@ -27,7 +59,7 @@ K9F4G08U0E , K9K8G08U0E, 同一个芯片手册;
 	- Generation: E = 6th generation
 	
 
-![Array Organization](Array Organization.png)
+![Array Organization](Array_Organization.png)
 
 K9K8G08U0E:     
 
@@ -36,7 +68,7 @@ K9K8G08U0E:
 * 1 Device = (2K + 64)B x 64 Pages x 8,192 Blocks = 8,448 Mbits = (8192 + 256)Mbits    
 * 其中可用空间为8192Mbits(1GB), 另外256Mbits(32M)存放ECC校验码;
 
-![Functional Block Diagram](Functional Block Diagram.jpg)
+![Functional Block Diagram](Functional_Block_Diagram.jpg)
 NAND芯片只有8条I/O线，命令、地址、数据都要通过这8个I/O口输入输出。这种形式减少了NAND芯片的引脚个数，并使得系统很容易升级到更大的容量（强大的兼容性）。
 
 * 写入命令、地址或数据时，都要将WE#,CE#信号同时拉低
@@ -136,3 +168,43 @@ NAND芯片只有8条I/O线，命令、地址、数据都要通过这8个I/O口�
 	* Waitting for R/nB to Ready
 	* 70h
 	* Read IO0 Status.
+
+
+
+## 代码详解
+
+&emsp;功能与SDRANAndMMU下的函数相同，为测试nand的使用，将程序编译大小超过8K，无法利用板子固化在ROM中因此需要start.s将程序从nand flash中拷贝到sdram中，然后跳转到sdram中运行。  
+&emsp;这里复制了nand的初始化程序和拷贝程序，自己编写将代码从nand flash中拷贝到sdram的程序，放置在nand.c中。
+&emsp;为调试方便，将串口部分程序拷贝过来
+
+## ISSUE
+
+1、忘记修改中.text段，没有把新添加的nand.o,uart.o添加到代码段中。由于start.s需要跳转到nand.c中的函数，而最后连接的文件没有这部分函数，所以出现问题。添加后灯可以正常点亮。
+
+## 要避免覆盖readme
+
+&emsp;copy 自 SeanXP(^o^)
+
+后记：   
+`$ cp -r xxx/dirs/ .`   
+`$ cp -r xxx/dirs/. .`   
+这两行命令不一样啊！    
+手抖多敲了一个'/'啊！   
+于是readme.md文件就被覆盖掉了啊！   
+
+
+	
+
+曾经有一份写好的文档放在我面前，   
+我没有备份，   
+等我覆盖的时候我才后悔莫及，   
+人世间最痛苦的事莫过于此。      
+如果上天能够给我一个再来一次的机会，   
+我会为那份文档输入三个指令：   
+git pull   
+git commit -m “good doc”   
+git push   
+如果非要在这个代码上加上一个长注释，   
+我希望是...  
+“天堂有路你不走，Code无涯苦作舟”  
+

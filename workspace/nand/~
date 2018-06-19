@@ -5,11 +5,6 @@ ARM-Tiny6410-DRAM
 **解决方法1**:  使用MiniTools.exe的Linux选项，将sdram.bin数据文件下载到Nand FLash设备的Linux Bootloader的位置。（详情见sd-no-os/文件夹的ARM启动流程）    
 **解决方法2**:  使用dd命令将.bin文件通过dd命令直接烧写到SDHC卡的BL1区域。（详情见sd-no-os/文件夹的ARM启动流程）   
 
-====
-SDRAM原理
-
-SDRAM是一个存储阵列，每个小格存储四个字节，一般一块SDFLASH有4个这样的阵列。寻址时，先利用两个地址位选择其中的一个，然后在发送行地址，列地址定位到对应的存储单元。
-
 ----
 
 <http://www.samsung.com/us/business/oem-solutions/pdfs/PSG_2H_2012.pdf>    
@@ -83,7 +78,7 @@ DRAM控制器可以通过配置**兼容SDRAM类型芯片**。通过向DRAM控制
 * 通过向memc_cmd寄存器写入状态模式命令，使DRAM控制器进入对应的工作模式。
 例如：向direct_cmd寄存器写入：'Prechargeall’，‘Autorefresh’，‘NOP’，and ‘MRS’ 等命令，可以让SDRAM芯片分别执行不同操作，向memc_cmd寄存器写入一些状态命令可以让SDRAM芯片进入’Config’, ‘Ready’, and ‘Low_power’等工作模式。 
 DRAM控制器支持两种节能模式。当SDRAM处于不活动状态并且持续一定的时钟周期时，DRAM控制器会自动将SDRAM进入预充电节能模式或正常节能模式下以降低系统功耗。当驱动操作DRAM控制器进入对应的STOP（停止），Deep Stop（深度睡眠），Sleep Mode（睡眠）等模式时，SDRAM芯片进入自刷新的节能模式。* 支持SDR SDRAM，Mobile SDR SDRAM，DDR SDRAM和Mobile DDR SDRAM类型芯片
-* 支持两个内存芯片
+* 支持两个内存芯片（芯片之间共享除了时钟使能和芯片选择引脚外的其他引脚）
 
 * 支持64位的AMBA AXI总线类型
 
