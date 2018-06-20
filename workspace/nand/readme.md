@@ -15,8 +15,8 @@
 
 其中Nor支持XIP，XIP是指在flash上运行程序,需要能够随机访问。
 
-Nor：块大小64~128KB，擦写一个块4s，擦写次数1万次，位反转少。  
-Nand：块大小8~64KB，擦写一个块2ms，擦写次数可达10万次，容易位反转。
+Nor：块大小64\~128KB，擦写一个块4s，擦写次数1万次，位反转少。  
+Nand：块大小8\~64KB，擦写一个块2ms，擦写次数可达10万次，容易位反转。
 
 ## Nand接口和访存
 
@@ -33,7 +33,7 @@ Nand：块大小8~64KB，擦写一个块2ms，擦写次数可达10万次，容�
 Tiny6410 - NAND Flash Controller
 ====
 
-###Stepping Stone
+### Stepping Stone
 The S3C6410X is equipped with an internal SRAM buffer called ‘Steppingstone’.    Generally, the boot code will copy NAND flash content to SDRAM. Using hardware ECC, the NAND flash data validity will be checked. After the NAND flash content is copied to SDRAM, main program will be executed on SDRAM.    To use NAND Flash, 'XSELNAND' pin must be connected to High Level. (原理图Tiny6410-1308.pdf中，'XSELNAND'引脚连接VDD3V3)
 
 
