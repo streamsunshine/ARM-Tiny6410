@@ -41,7 +41,7 @@ _start:
     beq CleanBss
 
 //直接从Nand Flash复制代码,r0,r1,r2分别对应第一，二，三个参数
-    ldr r2,=codeEnd
+    ldr r2,=bssStart
     sub r2,r2,r1
     //
     bl copy2addr

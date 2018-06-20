@@ -41,7 +41,7 @@ _start:
 
 //复制代码到目的地址中
 CopyCode:
-    ldr r2,=codeEnd
+    ldr r2,=bssStart
 
 CopyCodeLoop:
     ldr r3,[r0],#4

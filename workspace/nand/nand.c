@@ -404,10 +404,6 @@ void nand_read_in_page(unsigned char *buffer,unsigned long srcAddr,int size)
 void copy2addr(unsigned long srcAddr,unsigned char* aim,int size)
 {
     int length;
-    UART0_Port_Init();
-    UART0_Set_BaudRate();
-    UART0_Set_Format();
-    UART0_SendString("\n\r-----\n\r");
     if(srcAddr & NAND_PAGE_MASK)
     {
         length = NAND_PAGE_SIZE-(srcAddr & NAND_PAGE_MASK);
@@ -424,6 +420,4 @@ void copy2addr(unsigned long srcAddr,unsigned char* aim,int size)
     }
     else
         nand_read_page(aim,srcAddr,size);
-    
-    UART0_SendString("\n\r--end---\n\r");
 }

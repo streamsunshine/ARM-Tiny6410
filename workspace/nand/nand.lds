@@ -14,7 +14,6 @@ SECTIONS
         * (.text)
     }
     . = ALIGN(4);
-    codeEnd = .;
 
     .rodata : {
         * (.rodata)
@@ -24,6 +23,7 @@ SECTIONS
         * (.data)
     }
 
+    . = ALIGN(4);
     bssStart = .;
     .bss : {
         * (.bss)
