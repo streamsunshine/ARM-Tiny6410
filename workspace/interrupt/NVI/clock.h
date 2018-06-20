@@ -1,31 +1,9 @@
-/****************************************************************
-    Copyright (C) 2015 Sean Guo. All rights reserved.
-					      									  
-    > File Name:         < clock.c >
-    > Author:            < Sean Guo >
-    > Mail:              < iseanxp+code@gmail.com >
-    > Created Time:      < 2015/10/28 >
-    > Last Changed: 
-    > Description:		FriendlyARM - Tiny6410 裸机程序 - clock 时钟配置(ACLK/MCLK) 
-						Tiny6410 (1308版) - XTO/XTI - 12M HZ晶振
+#ifndef CLOCK_H
+#define CLOCK_H
 
-S3C6410: 
-	时钟源:
-		ARMCLK - CPU
-		HCLK - AXI/AHB 总线外设(存储/中断/lcd等控制器)
-		PCLK - APB 总线外设(看门狗，定时器，SD等)
-	PPL : 
-		1. 用于ARMCLK (for CPU); 
-		2. 用于HCLK & PLK (AHB/APB总线设备);
-		3. 用于外设 (供UART,IIS,IIC使用); 
-****************************************************************/
+/*定义时钟配置相关的寄存器，以及相应的寄存器值*/
 
-#ifndef __clock__
-#define __clock__
-
-
-// {{{ ---------------- PLL Control Registers --------------------
-// Control PLL locking period for APLL
+/*****************PLL Control Rigister******************/
 #define APLL_LOCK (*((volatile unsigned long *)0x7E00F000))
 // Control PLL locking period for MPLL
 #define MPLL_LOCK (*((volatile unsigned long *)0x7E00F004))
@@ -36,7 +14,6 @@ S3C6410:
 
 // Control PLL output frequency for APLL
 #define APLL_CON  (*((volatile unsigned long *)0x7E00F00C))
-
 // APLL_CON: 
 //		[31], ENABLE, PLL enable control (0: disable, 1: enable), Reset value: 0;
 //		[25:16], MDIV, PLL M divide value, Reset value: 0x190 (400);
@@ -82,7 +59,6 @@ S3C6410:
 // Cacheable bus transaction selection register, Reset Value: 0x0000_0000
 // [19], SYNC667, 0 : Normal Mode, 1 : Sync 667MHz Mode;
 #define MISC_CON (*((volatile unsigned long *)0x7E00F838))
-// }}}
 
 // 分频系数RATIO
 // 注释中计算式的前提: CLK_SRC = 1, 选择PLL; MISC_CON[19] = 0, Normal Mode;
@@ -92,7 +68,6 @@ S3C6410:
 #define HCLK_RATIO   1  // HCLK 	= HCLKX2   / (HCLK_RATIO + 1)   = 266/(1+1) = 133  MHz
 #define PCLK_RATIO   3  // PCLK   	= HCLKX2   / (PCLK_RATIO + 1)   = 266/(3+1) = 66.5 MHz
 
-// 时钟初始化
-void clock_init(void);
-
+/********************Function Declaration*********************/
+void ClockInit(void);
 #endif

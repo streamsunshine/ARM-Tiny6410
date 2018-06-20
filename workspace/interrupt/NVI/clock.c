@@ -1,28 +1,7 @@
-/****************************************************************
-    Copyright (C) 2015 Sean Guo. All rights reserved.
-					      									  
-    > File Name:         < clock.c >
-    > Author:            < Sean Guo >
-    > Mail:              < iseanxp+code@gmail.com >
-    > Created Time:      < 2015/07/31 >
-    > Last Changed: 
-    > Description:		FriendlyARM - Tiny6410 裸机程序 - clock 时钟配置(ACLK/MCLK) 
-						Tiny6410 (1308版) - XTO/XTI - 12M HZ晶振
-
-S3C6410: 
-	时钟源:
-		ARMCLK - CPU
-		HCLK - AXI/AHB 总线外设(存储/中断/lcd等控制器)
-		PCLK - APB 总线外设(看门狗，定时器，SD等)
-	PPL : 
-		1. 用于ARMCLK (for CPU); 
-		2. 用于HCLK & PLK (AHB/APB总线设备);
-		3. 用于外设 (供UART,IIS,IIC使用); 
-****************************************************************/
 #include "clock.h"
 
-// {{{ 时钟初始化
-void clock_init(void)
+// 时钟初始化
+void ClockInit(void)
 {	
 	/* 1. 设置各PLL的LOCK_TIME,使用默认值 */
 	//	设置PLL 后，时钟从FIN(PLL外部输入参考信号) 提升到目标频率时，需要一定的时间，即锁定时间。
@@ -52,4 +31,4 @@ void clock_init(void)
 	/* 5. 选择PLL的输出作为时钟源 */
 	CLK_SRC = 0x03; // bit[1:0] = 0x11; APLL_SEL = 1, MPLL_SEL = 1; 
 	// bit[2] = 0x0; EPLL_SEL = 0;
-}//}}}
+}

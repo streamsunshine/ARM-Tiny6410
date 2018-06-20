@@ -8,6 +8,9 @@
   > Last Changed: 
   > Description:		Friendly ARM - Tiny6410 - MMU配置
  ****************************************************************/
+
+#include "mmu.h"
+
 // Translation Table, 分配一块内存(可自由分配), 用作地址映射, 
 // Translation Table Base (TTB), 转换表首地址, 要储存到协处理器C15的Control Register 2(页表基址寄存器)
 // TTB的地址存放在页表基址寄存器的[31:14]; [14:0]默认为0;
@@ -64,6 +67,13 @@ void create_page_table(void)
 	// long* 指针+1后的地址为下一个四字节地址;
 	// 若table = 0x5100_0000, 则table[100] = 0x5100_0400;
 	unsigned long virtul_addr, physical_addr;
+//在没有添加这一段时，不能工作，因为从mmu_init返回时对应mmu已经初始化了，而如果没有0x000段的话,会找不到，所以程序不能运行	
+    virtul_addr   = 0x00000000;
+	physical_addr = 0x00000000;
+	// Section base address: [31:20] , 0xFFF0_0000,只取实际地址的前12位放在段描述符中, 因此为physical_addr & 0xFFF0_0000;
+	// virtul_addr[31:20] 为Table index, 对应页表的table[13:2]位, 由于C语言指针的运算特性，因此为virtul_addr >> 20;
+	*(table + (virtul_addr >> 20)) = (physical_addr & 0xFFF00000) | MMU_SECTION_WB;
+
 
 	// 映射Stepping Stone地址，因为start.S中配置栈顶为0x0c002000; 没有映射则栈无法正常使用
 	virtul_addr   = 0x0C000000;
@@ -72,21 +82,37 @@ void create_page_table(void)
 	// virtul_addr[31:20] 为Table index, 对应页表的table[13:2]位, 由于C语言指针的运算特性，因此为virtul_addr >> 20;
 	*(table + (virtul_addr >> 20)) = (physical_addr & 0xFFF00000) | MMU_SECTION_WB;
 
-	// UART 寄存器地址映射
+	// 如果leds.c使用0x7F008800地址，应该加上下面这段地址映射；
+#ifndef MMU_VIRSUAL_ADDRESS	//没有使用虚拟地址
 	virtul_addr   = 0x7F000000;
 	physical_addr = 0x7F000000;
 	*(table + (virtul_addr >> 20)) = (physical_addr & 0xFFF00000) | MMU_SECTION_NCNB;
+#else
+	// 如果leds.c使用虚拟地址，应该加上下面这段地址映射;
+	virtul_addr   = 0x10000000;
+	physical_addr = 0x7F000000;
+	*(table + (virtul_addr >> 20)) = (physical_addr & 0xFFF00000) | MMU_SECTION_NCNB;
+#endif
+    //interrupt寄存器地址映射
+	virtul_addr   = 0x71000000;
+	physical_addr = 0x71000000;
+	while(virtul_addr < 0x71300000) // 64MB内存
+	{
+		*(table + (virtul_addr >> 20)) = (physical_addr & 0xFFF00000) | MMU_SECTION_NCNB;
+		virtul_addr 	+= 0x100000; 
+		physical_addr	+= 0x100000;
+	}
 
 	// SDRAM 地址映射
 	virtul_addr   = 0x50000000;
 	physical_addr = 0x50000000;
-	while(virtul_addr < 0x60000000) // 64MB内存
+	while(virtul_addr < 0x54000000) // 64MB内存
 	{
 		*(table + (virtul_addr >> 20)) = (physical_addr & 0xFFF00000) | MMU_SECTION_NCNB;
 		virtul_addr 	+= 0x100000; 
 		physical_addr	+= 0x100000;
 		// 0x501x_xxxx
-		// 0x600x_xxxx
+		// 0x540x_xxxx
 	}
 }
 

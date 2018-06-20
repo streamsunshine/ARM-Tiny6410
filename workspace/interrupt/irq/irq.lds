@@ -12,7 +12,6 @@ SECTIONS
 			start.o
 			clock.o
 			sdram.o
-			mmu.o
 			main.o
 			uart.o
 			irq.o

@@ -126,41 +126,4 @@ void irq_init(void)
 	// [1], INT_EINT0 : External interrupt Group 0 (EINT0~EINT3)
 	VIC0INTENABLE |= (0x1); 
 	
-	// 设置CPSR的总中断位, [7], I; [6], F; 写1表示禁止中断;
-	// 在Start.S中已经开启总中断;
-	/*
-	__asm__(
-			"mrs r0, cpsr\n"
-			"bic r0, r0, #(1 << 7)\n"
-			"msr cpsr, r0\n"
-		   );
-	*/
 }//}}}
-
-/*
-// {{{
-void do_irq(void)
-{
-	int i = 0;
-
-	// 分辨是哪个中断 
-	for (i = 0; i < 6; i ++)
-	{
-		if (EINT0PEND & (1<<i))
-		{
-			if (GPNDAT & (1<<i))
-			{
-				printf("K%d released\n\r", i+1);
-			}
-			else
-			{
-				printf("K%d pressed\n\r", i+1);
-			}
-		}
-	}
-
-	// 清中断 
-	EINT0PEND   = 0x3f;
-	VIC0ADDRESS = 0;
-}//}}}
-*/

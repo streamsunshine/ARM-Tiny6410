@@ -7,10 +7,10 @@ LD = ${CPATH}ld
 CP = ${CPATH}objcopy
 DUMP = ${CPATH}objdump
 CFLAGS = -c -nostdlib
-LDFLGS = -T irq.lds 
+LDFLGS = -T cpsr.lds 
 
 OBJECT = led
-objs = start.o main.o clock.o sdram.o irq.o key.o leds.o uart.o
+objs = start.o main.o clock.o sdram.o mmu.o uart.o
 
 $(OBJECT).bin : $(objs) 
 	${LD} ${LDFLGS} -o ${OBJECT}.elf $^
