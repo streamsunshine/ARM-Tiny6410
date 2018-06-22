@@ -1,0 +1,37 @@
+/*这里测试lds文件的一些性质，在指定加载地址时，如果两个节之间有空隙，编译出来的文件将以0x00填补中间的空隙，所以在输出的.bin文件的大小会受到加载地址设置的影响*/
+/*直接使用*(.text)指定代码段和写出.o文件在指定会有不同，后者会导致数据也编译到代码段中*/
+SECTIONS
+{
+    /*运行地址在SDRAM中*/
+    .text : {
+        start.o
+        led.o
+        clock.o
+        * (.text)
+    }
+    .test : AT(0x02000000) {
+        sdram.o
+        mmu.o
+        nand.o
+        uart.o 
+        * (.text)
+    }
+
+    . = ALIGN(4);
+
+    .rodata : {
+        * (.rodata)
+    }
+
+    .data : {
+        * (.data)
+    }
+
+    . = ALIGN(4);
+    bssStart = .;
+    .bss : {
+        * (.bss)
+    }
+    bssEnd = .;
+}
+

@@ -2,6 +2,8 @@
 
 [本目录代码详解](#代码详解)
 
+    这里做了一个关于lds文件的测试，参见nan.ldsBak文件。
+
 ## 概念
 
 **SLC**：single level cell，一个cell存储一个bit，只有高低电平，擦写次数可达10万次。  
