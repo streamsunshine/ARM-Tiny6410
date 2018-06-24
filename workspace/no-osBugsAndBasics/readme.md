@@ -11,9 +11,9 @@
  [6、时钟配置和调用时机](#6basics_时钟配置和调用时机)  
  [7、启动流程](#7basics_启动流程)  
  [8、SRAM，DRAM，SDRAM，DDR SDRAM](#8basics_ram)  
- [9、Boot镜像区](#9basics_boot镜像区)
- [10、start.s启动文件的编写](#10basics启动文件的编写)
- [11、程序编译过程详解(有助于编写start.s)](#11basics程序编译过程详解)
+ [9、Boot镜像区](#9basics_boot镜像区)  
+ [10、start.s启动文件的编写](#10basics启动文件的编写)  
+ [11、程序编译过程详解(有助于编写start.s)](#11basics程序编译过程详解)  
 
 ### 1Bugs_C启动文件和标准库文件
 <span id = "1Bugs">跳转到的位置</span>
