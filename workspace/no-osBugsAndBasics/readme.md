@@ -192,7 +192,7 @@ MODEM 启动模式，S3C6410的MODEM启动，指的外部HOST MODEM通过6410间
 将启动代码传输到6410的内部 8KB stepping stone区域，然后通过设置协议寄存器（protocol register）系统控制寄存器（位于bank 0x0B）的bit0，激活s3c6410 MEODOM booting功能。
 
 MODEM Booting基本流程：  
-在6410上电之后，ARM内核PC从地址0x0开始取指令，此时Boot镜像区0x0开始的32KB为6410内部I_ROM地址 0x08000000~0x08007FFF的32KB数据的镜像，
+在6410上电之后，ARM内核PC从地址0x0开始取指令，此时Boot镜像区0x0开始的32KB为6410内部I_ROM地址 0x08000000\~0x08007FFF的32KB数据的镜像，
 所以当PC从0x0开始取指令执行，实际是从I_ROM 0x08000000处开始执行代码，
 而I_ROM区32KB存放的是6410出厂固化的一段启动代码，
 这段代码会自动根据是MODEM Boot启动配置，初始化MEDEM 主机接口，
@@ -210,8 +210,8 @@ ARM内核PC跳转到stepping stone开始处执行代码。
 
 当OM[4:1]=1111，对应系统选择当IROM启动模式，
 根据GPN[15:13]不同选择，IROM Boot又细分成SD/MMC、ONENAND、NAND Flash三种启动方式。
-IROM Booting配置启动主要的特点是：首先上电之后Boot镜像区地址为0x00000000~0x00007FFF 的
-32KB区域为6410内部的I_ROM区低32KB字节0x08000000~0x08007FFF区域数据的镜像，
+IROM Booting配置启动主要的特点是：首先上电之后Boot镜像区地址为0x00000000\~0x00007FFF 的
+32KB区域为6410内部的I_ROM区低32KB字节0x08000000\~0x08007FFF区域数据的镜像，
 ARM 内核从0x0取指令实际是从已经存储6410出厂固化代码的I_ROM区低32KB。
 其次是I_ROM 32KB会根据GPN[15:13]的不同设定，执行不同的代码搬移工作，
 比如当为NAND Flash启动设定，I_ROM 32KB会初始化NAND Flash控制器，搬移NAND Flash 的低8KB数据到6410内部的8k stepping stone区域，
@@ -257,11 +257,11 @@ BL1主要是将除（NAND Flash、SD/MMC、ONENAND Flash等几者之一）8K之�
 S3C6410中的IROM(位于0x0800_0000-0x08FF_FFFF中间的一段（这里实际物理地址空间为32KB），被映射到0x0000_0000-0x07FF_FFFF这段称为引导镜像区的区域),CPU上电后先执行IROM的程序（初始化、从启动设备中读取前8K数据到Stepping Stone、跳转到Stepping Stone执行程序）
 
 Stepping Stone(Boot Loader)      
-&emsp;0x0C00_0000 ~ 0x0FFF_FFFF (64MB)这里实际物理地址空间只有8K SDRAM。大于8KB的程序要到DRAM中执行，对于这种情况，NANDFLASH拷贝到这里的8KB程序中应该包括，NAND FLASH初始化程序，DRAM初始化程序，拷贝程序。 最后跳转到DRAM中。
+&emsp;0x0C00_0000 \~ 0x0FFF_FFFF (64MB)这里实际物理地址空间只有8K SDRAM。大于8KB的程序要到DRAM中执行，对于这种情况，NANDFLASH拷贝到这里的8KB程序中应该包括，NAND FLASH初始化程序，DRAM初始化程序，拷贝程序。 最后跳转到DRAM中。
 
 DRAM  
     0x5000_0000 ~ 0x5FFF_FFFF (256MB)    
-	0x6000_0000 ~ 0x6FFF_FFFF (256MB)    
+	0x6000_0000 \~ 0x6FFF_FFFF (256MB)    
 &emsp;Friendly ARM - Tiny6410使用DRAM Controller驱动Mobile SDRAM芯片。因此其内存对应的其实地址为0x5000_0000;
 	* 程序的Makefile文件中，指定链接地址:
 		
@@ -279,20 +279,20 @@ DRAM
 
 ### 9Basics_Boot镜像区
 
-Boot镜像区位于6410寻址空间的0x0~0x07FFFFFF（128MB）位置，这段区域并没有真正的存储设备，实际运行过程中是映射到内部存储区或静态存储区，Boot镜像区固定起始地址为0x00000000。使用Boot镜像区的原因是ARM内核启动之后强制PC从0x0地址开始取指有关。至于与哪些特定区域镜像，与系统配置密切相关，当系统为：
+Boot镜像区位于6410寻址空间的0x0\~0x07FFFFFF（128MB）位置，这段区域并没有真正的存储设备，实际运行过程中是映射到内部存储区或静态存储区，Boot镜像区固定起始地址为0x00000000。使用Boot镜像区的原因是ARM内核启动之后强制PC从0x0地址开始取指有关。至于与哪些特定区域镜像，与系统配置密切相关，当系统为：
 
 1、SROM (8 bit/16 bit)启动（booting）
-&emsp;当系统为SROM启动，Boot镜像区为SROM控制器的第0个bank（128MB），即0x10000000~0x17FFFFFF地址，支持的存储器可以是SRAM、ROM、Nor flash等，对应地址片选引脚Xm0CSn[0]。
+&emsp;当系统为SROM启动，Boot镜像区为SROM控制器的第0个bank（128MB），即0x10000000\~0x17FFFFFF地址，支持的存储器可以是SRAM、ROM、Nor flash等，对应地址片选引脚Xm0CSn[0]。
 
 2、MODEM(8 bit/16 bit)启动（booting）
-&emsp;当系统为MODEM模式，Boot镜像区仅地址为0x00000000~0x00007FFF的32KB区域有效，且对应为6410内部的I_ROM区低32KB字节0x08000000~0x08007FFF。
+&emsp;当系统为MODEM模式，Boot镜像区仅地址为0x00000000\~0x00007FFF的32KB区域有效，且对应为6410内部的I_ROM区低32KB字节0x08000000\~0x08007FFF。
 
 3、ONENAND 启动（booting）
-&emsp;当系统为ONENAND 模式启动，整个Boot镜像区0x0~0x07FFFFFF全部为静态存储器0x20000000~0x27FFFFFF地址镜像，128MB一一对应。
+&emsp;当系统为ONENAND 模式启动，整个Boot镜像区0x0\~0x07FFFFFF全部为静态存储器0x20000000\~0x27FFFFFF地址镜像，128MB一一对应。
 6410支持2 Bank个ONENAND 地址映射区，分别为ONENAND0 和ONENAND1，只有ONENAND0对应的地址才可能在启动时候镜像到Boot镜像区。
 
 4、IROM启动（booting）
-&emsp;当系统配置为IROM启动时，Boot镜像区仅地址为0x00000000~0x00007FFF的32KB区域有效，且对应为6410内部的I_ROM区低32KB字节0x08000000~0x08007FFF。
+&emsp;当系统配置为IROM启动时，Boot镜像区仅地址为0x00000000\~0x00007FFF的32KB区域有效，且对应为6410内部的I_ROM区低32KB字节0x08000000\~0x08007FFF。
 
 [参考](https://blog.csdn.net/mj5742356/article/details/9108299)
 
@@ -306,7 +306,7 @@ Boot镜像区位于6410寻址空间的0x0~0x07FFFFFF（128MB）位置，这段�
 
 &emsp;理解程序编译的具体过程，对编写start.s的地址拷贝有很大的帮助。
 
-$emsp;运行地址是程序实际运行时，程序应该存放的地址。在编译时，编译器会根据设置的地址，编译程序中的标号（比如函数名，变量的存储地址）。在程序运行时，就会跳到对应地址处运行程序，因此需要提前将对应代码复制到运行地址处。  
+&emsp;运行地址是程序实际运行时，程序应该存放的地址。在编译时，编译器会根据设置的地址，编译程序中的标号（比如函数名，变量的存储地址）。在程序运行时，就会跳到对应地址处运行程序，因此需要提前将对应代码复制到运行地址处。  
 &emsp;加载地址，是指程序存储的位置。如果想让程序按照设置的地址存储，需要下载器和程序编译的格式的配合，即需要程序格式包含加载地址信息，下载器能够读取这部分信息，并将程序防止到对应位置。能够包含加载地址信息的程序格式比如，S19，elf。
 &emsp;如果没有上述配合，比如.bin文件，加载地址会相对地发挥作用，比如两次指定的加载地址之间存在空隙，编译器会在其中填充0x00填补这部分空隙，以保证整体拷贝时能够将后面的程序放置在正确的位置。但是这显然会增加拷贝程序的负担，因此一般连续的指定加载地址，让程序的各部分连续存储，通过增加一些标志，在运行时将程序拷贝到合适的位置（运行地址处）。
 
