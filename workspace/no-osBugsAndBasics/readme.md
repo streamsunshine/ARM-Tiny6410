@@ -38,10 +38,10 @@
 
  2、定义寄存器。由于寄存器的值可能随时改变，需要将其定义成volatile类型。由于寄存器是在固定地址的，所以就需要定义一个在固定地址处的volatile变量，有以下几种方案：
 ```
-//宏定义
+//方案一、宏定义
 #define GPIO_CON (*(unsigned int *)0x70000080)
 
-//定义代码段，利用lds文件将其定位到固定地址
+//方案二、定义代码段，利用cmd文件设置其运行地址
 //以DSP28335为例
 union SCICCR_REG {
     Uint16              all;
@@ -58,9 +58,20 @@ struct SCI_REGS{
 #pragma DATA_SECTION(SciaRegs,"SciaRegsFile");
 volatile struct SCI_REGS SciaRegs;
 
-//在最终定义结构体是加上volatile并通过#pragram将结构体指定到SCI模块的寄存器空间首地址处。
+//在最终定义结构体是加上volatile，并通过#pragram将结构体指定到SCI模块的一个段标号中，该段标号在DSP2833x_Headers_nonBIOS.cmd文件中定义。
+MEMORY
+{
+ PAGE 0:    /* Program Memory */
 
-//定义指向结构体的指针，结构体中的成员定义为volatile类型。
+ PAGE 1:    /* Data Memory */	//这里定义一个存储区域，用来为SCIA寄存器指定运行地址。指定运行地址并不需要实际存储，只是让变量地址对应到寄存器地址
+ SCIA        : origin = 0x007050, length = 0x000010     /* SCI-A registers */
+}
+SECTIONS
+{
+	SciaRegsFile      : > SCIA,        PAGE = 1
+}	
+
+//方案三、定义指向结构体的指针，结构体中的成员定义为volatile类型。
 //以ARM cortex4的28335为例
 #define     __IO    volatile 
 typedef struct{
