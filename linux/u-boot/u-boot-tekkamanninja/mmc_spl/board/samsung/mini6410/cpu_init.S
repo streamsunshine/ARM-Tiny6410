@@ -1,0 +1,1 @@
+/home/max/gitProject/ARM-Tiny6410/linux/u-boot/u-boot-tekkamanninja/arch/arm/cpu/arm1176/s3c64xx/cpu_init.S

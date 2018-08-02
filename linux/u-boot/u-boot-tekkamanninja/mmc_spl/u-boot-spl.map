@@ -1,0 +1,157 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+                0x00000000                . = 0x0
+                0x00000000                . = ALIGN (0x4)
+
+.text           0x00000000      0x4d8
+ start.o(.text)
+ .text          0x00000000       0xc0 start.o
+                0x00000000                _start
+                0x00000040                _end_vect
+                0x00000040                _TEXT_BASE
+                0x00000048                _bss_start_ofs
+                0x0000004c                _bss_end_ofs
+                0x00000050                _end_ofs
+                0x00000054                IRQ_STACK_START_IN
+ cpu_init.o(.text)
+ .text          0x000000c0      0x200 cpu_init.o
+                0x000000c0                mem_ctrl_asm_init
+ mmc_boot.o(.text)
+ .text          0x000002c0       0x90 mmc_boot.o
+                0x000002c0                copy_uboot_to_ram
+                0x00000328                mmc_boot_copy
+ *(.text)
+ .text          0x00000350      0x188 lowlevel_init.o
+                0x00000354                lowlevel_init
+
+.glue_7         0x000004d8        0x0
+ .glue_7        0x00000000        0x0 linker stubs
+
+.glue_7t        0x000004d8        0x0
+ .glue_7t       0x00000000        0x0 linker stubs
+
+.vfp11_veneer   0x000004d8        0x0
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x000004d8        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.iplt           0x000004d8        0x0
+ .iplt          0x00000000        0x0 start.o
+                0x000004d8                . = ALIGN (0x4)
+
+.rodata
+ *(SORT(.rodata*))
+                0x000004d8                . = ALIGN (0x4)
+
+.data           0x000004d8        0x0
+ *(.data)
+ .data          0x000004d8        0x0 start.o
+ .data          0x000004d8        0x0 cpu_init.o
+ .data          0x000004d8        0x0 mmc_boot.o
+ .data          0x000004d8        0x0 lowlevel_init.o
+
+.igot.plt       0x000004d8        0x0
+ .igot.plt      0x00000000        0x0 start.o
+                0x000004d8                . = ALIGN (0x4)
+
+.got
+ *(.got)
+                0x000004d8                __u_boot_cmd_start = .
+
+.u_boot_cmd
+ *(.u_boot_cmd)
+                0x000004d8                __u_boot_cmd_end = .
+                0x000004d8                . = ALIGN (0x4)
+                0x000004d8                __bss_start = .
+
+.rel.dyn        0x000004d8        0x0
+                0x000004d8                __rel_dyn_start = .
+ *(.rel*)
+ .rel.iplt      0x00000000        0x0 start.o
+                0x000004d8                __rel_dyn_end = .
+
+.dynsym         0x000004d8        0x0
+                0x000004d8                __dynsym_start = .
+ *(.dynsym)
+                0x000004d8                _end = .
+
+.bss            0x000004d8        0x0
+                0x000004d8                __bss_start = .
+ *(.bss)
+ .bss           0x000004d8        0x0 start.o
+ .bss           0x000004d8        0x0 cpu_init.o
+ .bss           0x000004d8        0x0 mmc_boot.o
+ .bss           0x000004d8        0x0 lowlevel_init.o
+                0x000004d8                . = ALIGN (0x4)
+                0x000004d8                __bss_end__ = .
+Address of section .text set to 0x0
+LOAD start.o
+LOAD cpu_init.o
+LOAD lowlevel_init.o
+LOAD mmc_boot.o
+OUTPUT(/home/max/gitProject/ARM-Tiny6410/linux/u-boot/u-boot-tekkamanninja/mmc_spl/u-boot-spl elf32-littlearm)
+
+.ARM.attributes
+                0x00000000       0x26
+ .ARM.attributes
+                0x00000000       0x1a start.o
+ .ARM.attributes
+                0x0000001a       0x1a cpu_init.o
+ .ARM.attributes
+                0x00000034       0x2a mmc_boot.o
+ .ARM.attributes
+                0x0000005e       0x1a lowlevel_init.o
+
+.comment        0x00000000       0x46
+ .comment       0x00000000       0x46 mmc_boot.o
+                                 0x47 (size before relaxing)
+
+.note.GNU-stack
+                0x00000000        0x0
+ .note.GNU-stack
+                0x00000000        0x0 mmc_boot.o
+
+.debug_line     0x00000000      0x2df
+ .debug_line    0x00000000       0x5f start.o
+ .debug_line    0x0000005f       0xc8 cpu_init.o
+ .debug_line    0x00000127       0xfe mmc_boot.o
+ .debug_line    0x00000225       0xba lowlevel_init.o
+
+.debug_info     0x00000000      0x34c
+ .debug_info    0x00000000       0x94 start.o
+ .debug_info    0x00000094       0x97 cpu_init.o
+ .debug_info    0x0000012b      0x185 mmc_boot.o
+ .debug_info    0x000002b0       0x9c lowlevel_init.o
+
+.debug_abbrev   0x00000000      0x11a
+ .debug_abbrev  0x00000000       0x14 start.o
+ .debug_abbrev  0x00000014       0x14 cpu_init.o
+ .debug_abbrev  0x00000028       0xde mmc_boot.o
+ .debug_abbrev  0x00000106       0x14 lowlevel_init.o
+
+.debug_aranges  0x00000000       0x80
+ .debug_aranges
+                0x00000000       0x20 start.o
+ .debug_aranges
+                0x00000020       0x20 cpu_init.o
+ .debug_aranges
+                0x00000040       0x20 mmc_boot.o
+ .debug_aranges
+                0x00000060       0x20 lowlevel_init.o
+
+.debug_loc      0x00000000       0x26
+ .debug_loc     0x00000000       0x26 mmc_boot.o
+
+.debug_str      0x00000000      0x1f8
+ .debug_str     0x00000000      0x1f8 mmc_boot.o
+                                0x231 (size before relaxing)
+
+.debug_frame    0x00000000       0x48
+ .debug_frame   0x00000000       0x48 mmc_boot.o

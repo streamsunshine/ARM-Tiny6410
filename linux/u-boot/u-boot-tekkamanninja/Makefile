@@ -25,6 +25,10 @@ VERSION = 2011
 PATCHLEVEL = 06
 SUBLEVEL =
 EXTRAVERSION =
+
+CROSS_COMPILE = /home/max/tiny6410/arm-2014.05/bin/arm-none-linux-gnueabi-
+ARCH = arm
+
 ifneq "$(SUBLEVEL)" ""
 U_BOOT_VERSION = $(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRAVERSION)
 else

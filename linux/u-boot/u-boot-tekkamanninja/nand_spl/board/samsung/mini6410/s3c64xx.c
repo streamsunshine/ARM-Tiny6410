@@ -1,0 +1,1 @@
+/home/max/gitProject/ARM-Tiny6410/linux/u-boot/u-boot-tekkamanninja/drivers/mtd/nand/s3c64xx.c

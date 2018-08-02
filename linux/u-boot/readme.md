@@ -148,3 +148,36 @@ sudo mount -t nfs ***.***.***.***:/home/USER/nfs /nfs-client/
 * 如果想开机自动挂载：
 
 把上述指令 sudo mount -t nfs ***.***.***.***:/home/USER/nfs /nfs-clinet/ 写到 /etc/rc.local 文件中。
+
+
+## 编译u-boot
+
+这里将tekkamanninja的git仓库拷贝过来，放到u-boot-tekkamanninja目录，主要是为了防止tekkamanninja因为整理目录导致连接不正确。
+
+### 编译的问题
+
+&emsp;主目录下的Makefile的交叉编译链路径没有设置，一般都需要根据自己交叉编译链的实际安装位置进行设置，主要设置两个变量
+
+CROSS_COMPILE = 你的交叉编译链路径  
+ARCH = arm
+
+&emsp;注意交叉编译链路径要具体到gcc之前，比如arm-linux-gcc，则生面的CROSS_COMPILE就需要设置到arm-linux-
+
+### 编译步骤
+
+进入主目录后
+
+    make mini6410_config
+    make
+
+## 下载u-boot
+
+这里还是使用和下载裸机程序的方法。
+
+* 先挂载SD卡，将u-boot.bin程序拷贝到images/目录下，并指定为相应的名字（这里的设置参见裸机）可以使用这里的mountSDCopyBin.sh脚本文件，可以直接完成拷贝。
+
+* 将开关拨到SDBOOT，利用SD卡中的程序，将u-boot拷贝到nand。
+
+* 将开关拨到nand启动程序，此时运行的就是u-boot
+
+

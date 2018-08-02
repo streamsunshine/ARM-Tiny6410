@@ -1,0 +1,1 @@
+/home/max/gitProject/ARM-Tiny6410/linux/u-boot/u-boot-tekkamanninja/board/samsung/mini6410/lowlevel_init.S
