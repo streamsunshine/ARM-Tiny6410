@@ -3,6 +3,8 @@
 
 ## Hardware Info
 
+板子本身是没有mmc的，但是由于SD卡是从mmc发展而来的，所以当板子插入SD卡的时候，板子可以通过操作SD卡实现mmc的一些功能。
+
 | Hardware | Description |
 | :----: | :---------: |
 | CPU | **SAMSUNG S3C6410A**, [ARM1176JZF-S](doc/arm-naming-rules/readme.md), run at 533Mhz, up to 667Mhz |

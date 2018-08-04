@@ -9,7 +9,7 @@ Kernel: [Linux 2.6.38](ftp://ftp.kernel.org/pub/linux/kernel/v2.6/linux-2.6.38.t
 ##脚本快速编译内核
     
     $ git clone https://github.com/SeanXP/ARM-Tiny6410.git
-    $ wget ftp://ftp.kernel.org/pub/linux/kernel/v2.6/linux-2.6.38.tar.bz2
+    $ wget https://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.38.tar.bz2
     $ tar xjvf linux-2.6.38.tar.bz2 -C ARM-Tiny6410/linux/kernel/
     $ cd ARM-Tiny6410/linux/kernel/
     $ ./0_nandflash.sh

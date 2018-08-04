@@ -18,7 +18,7 @@ U-Boot
 
 ## 环境搭建
 
-&emsp;运行u-boot需要上位机配置一些环境，首先应该是交叉编译链，但是在逻辑部分已经有过说明，这里从tftp和nfs的上位机开始。
+&emsp;运行u-boot需要上位机配置一些环境，首先应该是交叉编译链，但是在裸机部分已经有过说明，这里从tftp和nfs的上位机开始。
 
 &emsp;环境ubuntu 14.04
 
@@ -156,6 +156,10 @@ sudo mount -t nfs ***.***.***.***:/home/USER/nfs /nfs-client/
 
 ### 编译的问题
 
+### 编译步骤
+
+1、设置交叉编译链
+
 &emsp;主目录下的Makefile的交叉编译链路径没有设置，一般都需要根据自己交叉编译链的实际安装位置进行设置，主要设置两个变量
 
 CROSS_COMPILE = 你的交叉编译链路径  
@@ -163,14 +167,24 @@ ARCH = arm
 
 &emsp;注意交叉编译链路径要具体到gcc之前，比如arm-linux-gcc，则生面的CROSS_COMPILE就需要设置到arm-linux-
 
-### 编译步骤
 
-进入主目录后
+2、运行编译指令
+
+进入主目录，执行
 
     make mini6410_config
     make
 
-## 下载u-boot
+前者用来对u-boot进行配置，从而在使make命令生成我们制定板子的u-boot。g关于mini6410_config的生成，设计到u-boot移植的问题，如果想要学习u-boot移植的知识请参考doc目录下的文档。
+
+## 生成的文件
+
+### u-boot-nand.bin
+
+u-boot-nand.bin是能够通过nand启动的u-boot程序。将u-boot-nand.bin下载到nand中，然后使用nand启动，就可以启动u-boot。
+
+
+#### 下载u-boot-nand.bin
 
 这里还是使用和下载裸机程序的方法。
 
@@ -180,4 +194,119 @@ ARCH = arm
 
 * 将开关拨到nand启动程序，此时运行的就是u-boot
 
+也可以使用SDBOOT的方法
 
+**SDBOOT启动U-Boot，通过NFS烧录U-Boot到NAND Flash:**
+
+1. 搭建NFS服务器，目录:  10.42.1.100:/var/nfsroot/arm/
+2. SDBOOT启动U-Boot
+
+		MINI6410 # nfs 50008000 10.42.1.100:/var/nfsroot/arm/u-boot-nand.bin
+		dm9000 i/o: 0x18000300, id: 0x90000a46
+		DM9000: running in 16 bit mode
+		MAC: 08:08:10:12:10:27
+		operating at 100M full duplex mode
+		Using dm9000 device
+		File transfer via NFS from server 10.42.1.100; our IP address is 10.42.1.70
+		Filename '/var/nfsroot/arm/u-boot-nand.bin'.
+		Load address: 0x50008000
+		Loading: 	###################################################
+		doen
+		Bytes transferred = 259672 (3f658 hex)
+3. 烧写进Nand Flash
+
+		MINI6410 # nand erase 0x0 0x80000
+		NAND erase: device 0 offset 0x0, size 0x80000
+		Erasing at 0x60000 -- 100% complete.
+		OK
+		
+		MINI6410 # nand write 50008000 0 0x80000
+		NAND write: device 0 offset 0x0, size 0x80000
+		524288 bytes written: OK
+		
+
+
+### u-boot-mmc.bin
+
+mmc_spl/u-boot-spl-16k.bin   
+u-boot.bin  
+
+U-boot因为在配置文件中已定义:
+
+	#define MMC_UBOOT_POS_BACKWARD            (0x300000)
+	#define MMC_ENV_POS_BACKWARD            (0x280000)
+	#define MMC_BACKGROUND_POS_BACKWARD        (0x260000)
+
+* mmc_spl/u-boot-spl-16k.bin烧写到BL1区（第一级引导，代码自拷贝部分）。
+* u-boot.bin烧写到BL2（SD卡末尾向前3MB的位置）（0x300000）
+* ENV的位置是在SD卡末尾向前2.5MB的位置（在BL2后0.5MB）（0x280000）
+* 背景图片的位置在SD卡末尾向前0x260000的位置。
+* 一般只需要烧写mmc_spl/u-boot-spl-16k.bin与u-boot.bin即可。
+
+SD卡 - BL1在倒数第二个扇区, 假设总扇区数目为$(total_sectors):  
+
+**mmc_spl写入扇区地址: write_addr = $(total_sectors) - 18;** 
+
+	# dd if=mmc_spl/u-boot-spl-16k.bin of=/dev/sdb seek=write_addr bs=512;
+实际运行时需要替换相应数字;
+
+**u-boot.bin写入扇区地址: write_addr = $(total_sectors) - 6144 sectors (3MB);**
+
+对于SDHC卡，最后的1024扇区是不识别的。
+$(total_sector) = $(true_sector) - 1024;
+
+eg. 
+
+	Disk /dev/sdb: 7.4 GiB, 7948206080 bytes, 15523840 sectors
+
+	u-boot-spl-16k.bin:
+	15523840 - 1024 - 18 = 15522798 sectors
+	u-boot.bin:
+	15523840 - 1024 - 6144(3MB) = 15516672 sectors = 7944536064 bytes
+
+`#sudo dd if=u-boot-spl-16k.bin of=/dev/sdb seek=15522798 bs=512`   
+`#sudo dd if=u-boot.bin of=dev/sdb seek=7944536064 bs=1`   
+
+dd具有扇区与字节的写入方式。
+
+
+## 熟悉u-boot命令
+
+请阅读mini2440_U-boot使用和移植手册。
+
+### 常用的几个命令
+
+* tftp addr1 serverip:filename      //表示从主机的tftp目录下，下载filename文件
+
+例子：tftp 0x50008000 10.42.1.248:uImage
+
+* nand erase offsetaddr size    //擦除offsetaddr开始处nand的size大小的数据
+
+例子：nand erase 0x80000 0x500000
+
+* nand write srcaddr destaddr size  //表示将源地址大小为size的数据写到nand中，偏移为目的地址指定处
+
+例子：nand write 0x50008000 0x80000 0x500000
+
+* setenv saveenv printenv
+
+
+## 内核相关的操作
+
+### mkimage
+
+&emsp;mkimage是编译u-boot时产生的一个程序。u-boot加载的内核要事先使用mkimage处理，然后使用bootm等内核引导命令来启动内核。因为，在bootm命令引导内核的时候，bootm需要读取一个64字节的文件头，来获取这个内核映像所针对的CPU体系结构，OS，加载到内存中的位置，在内存中的入口点等信息。这样bootm才能为OS设置好启动环境，并跳入内核的入口点。mkimage就是添加这个文件头的工具。
+
+&emsp;有关mkimage的具体用法参照../kernel目录下的相关说明。
+
+### bootargs
+
+u-boot向内核传递的参数，参见bootargs目录下的readme.md
+
+## u-boot源码分析
+
+&emsp;这部分工作在之前做过，参见本目录下的doc目录下的u-boot源码分析.doc。
+
+## u-boot移植
+
+请参考doc下面的文件**mini2440_U-boot使用移植手册.pdf**。

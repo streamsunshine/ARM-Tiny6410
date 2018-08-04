@@ -23,6 +23,7 @@
 #include <linux/mtd/partitions.h>
 #include <linux/serial_core.h>
 #include <linux/types.h>
+#include <linux/delay.h>
 
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
@@ -42,6 +43,7 @@
 #include <plat/nand.h>
 #include <plat/regs-serial.h>
 #include <plat/ts.h>
+#include <plat/regs-usb-hsotg-phy.h>
 
 #include <video/platform_lcd.h>
 
